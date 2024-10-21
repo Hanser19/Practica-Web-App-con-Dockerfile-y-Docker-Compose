@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pronóstico del Tiempo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .weather-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .search-box input {
+            width: 200px;
+            padding: 10px;
+            border: 1px solid #cccccc;
+            border-radius: 5px 0 0 5px;
+        }
+        .search-box button {
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .weather-info {
+            margin-top: 20px;
+        }
+        .weather-info img {
+            width: 100px;
+        }
+        .temperature {
+            font-size: 48px;
+            margin: 10px 0;
+        }
+        .description {
+            font-size: 18px;
+            color: #555555;
+        }
+        .city {
+            font-size: 22px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="weather-container">
+        <h1>Pronóstico del Tiempo</h1>
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Ingrese el nombre de la ciudad">
+            <button onclick="getWeather()">Buscar</button>
+        </div>
+        <div class="weather-info" id="weatherInfo">
+            <div class="city" id="cityName"></div>
+            <div class="temperature" id="temperature"></div>
+            <div class="description" id="weatherDescription"></div>
+            <img id="weatherIcon" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        const apiKey = '79e000c82bba5314b6dad97d838b3835'; // Reemplaza con tu clave de API de OpenWeather
+        const apiUrl = 'https://api.openweathermap.org/data/2.5/weather?q=';
+    
+        async function getWeather() {
+            const city = document.getElementById('cityInput').value;
+            if (city === '') {
+                alert('Por favor, ingrese el nombre de una ciudad');
+                return;
+            }
+    
+            try {
+                const response = await fetch(`${apiUrl}${city}&appid=${apiKey}&units=metric&lang=es`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error:', errorData);
+                    alert('Ciudad no encontrada o error en la solicitud.');
+                    return;
+                }
+    
+                const data = await response.json();
+                document.getElementById('cityName').innerText = data.name;
+                document.getElementById('temperature').innerText = `${data.main.temp}°C`;
+                document.getElementById('weatherDescription').innerText = data.weather[0].description;
+                document.getElementById('weatherIcon').src = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`;
+            } catch (error) {
+                console.error('Error al obtener los datos del clima:', error);
+                alert('Error al obtener los datos del clima');
+            }
+        }
+    </script>    
+
+</body>
+</html>
